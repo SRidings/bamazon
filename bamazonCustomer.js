@@ -1,15 +1,12 @@
-
-var Table = require('cli-table');
-var mysql = require('mysql');
 var inquirer = require('inquirer');
+var mysql = require('mysql');
+var Table = require('cli-table');
 
 
 var connection = mysql.createConnection({
     host: "127.0.0.1",
     port: 3306,
-
     user: "root",
-
     password: "root",
     database: "bamazon3"
 });
@@ -19,8 +16,6 @@ connection.connect(function(err) {
     console.log("connected as id " + connection.threadId);
     startPrompt();
 });
-
-
 
 function startPrompt() {
 
@@ -40,11 +35,8 @@ function startPrompt() {
     });
 }
 
-
-
 function inventory() {
 
-    // instantiate
     var table = new Table({
         head: ['ID', 'Item', 'Department', 'Price', 'Stock'],
         colWidths: [10, 30, 30, 30, 30]
@@ -52,11 +44,7 @@ function inventory() {
 
     listInventory();
 
-
     function listInventory() {
-
-      
-
         connection.query("SELECT * FROM products", function(err, res) {
             for (var i = 0; i < res.length; i++) {
 
@@ -80,7 +68,6 @@ function inventory() {
     }
 }
 
-
 function continuePrompt() {
 
     inquirer.prompt([{
@@ -99,7 +86,6 @@ function continuePrompt() {
     });
 }
 
-
 function selectionPrompt() {
 
     inquirer.prompt([{
@@ -115,7 +101,6 @@ function selectionPrompt() {
 
         }
     ]).then(function(userPurchase) {
-
 
         connection.query("SELECT * FROM products WHERE item_id=?", userPurchase.inputId, function(err, res) {
             for (var i = 0; i < res.length; i++) {
@@ -144,14 +129,12 @@ function selectionPrompt() {
 
                     var newStock = (res[i].stock_quantity - userPurchase.inputNumber);
                     var purchaseId = (userPurchase.inputId);
-                    //console.log(newStock);
                     confirmPrompt(newStock, purchaseId);
                 }
             }
         });
     });
 }
-
 
 function confirmPrompt(newStock, purchaseId) {
 
@@ -164,8 +147,6 @@ function confirmPrompt(newStock, purchaseId) {
 
     }]).then(function(userConfirm) {
         if (userConfirm.confirmPurchase === true) {
-
-
             connection.query("UPDATE products SET ? WHERE ?", [{
                 stock_quantity: newStock
             }, {
